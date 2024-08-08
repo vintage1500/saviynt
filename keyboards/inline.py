@@ -83,15 +83,15 @@ def show_team_task(chat_id, team_id):
     markup = InlineKeyboardMarkup(row_width=True)
     tasks_info = manager.task.task_by_team(team_id)
     if tasks_info is None or len(tasks_info) == 0:
+        markup.add(InlineKeyboardButton(text="Добавить задачу", callback_data=f"adds"))
+    else:
+        buttons = [InlineKeyboardButton(text=task_info[0], callback_data=f"description_{team_id}_{task_info[0]}") for
+                   task_info in tasks_info]
+        markup.add(*buttons)
         markup.add(
-            InlineKeyboardButton(text="Нет задач", callback_data=f"return")
+            InlineKeyboardButton(text="Удалить задачу", callback_data=f"delete_{team_id}")
         )
-    # else:
-    #     buttons = [InlineKeyboardButton(text=task_info, callback_data=f"description_{team_id}_{task_info}") for task_info in tasks_info]
-    #     markup.add(*buttons)
     markup.add(
-        InlineKeyboardButton(text="Разработка стартового меню", callback_data=f"none?"),
-        InlineKeyboardButton(text="Удалить задачу", callback_data=f"delete_{team_id}"),
         InlineKeyboardButton(text="Назад", callback_data=f"info")
     )
     return markup
@@ -114,7 +114,7 @@ def return_tasks(chat_id, team_id, task_id):
     user_accept = manager.task.get_task_user(chat_id)
     if user_accept is None:
         markup.add(
-            InlineKeyboardButton(text="Принять задачу", callback_data=f"accept_{task_id}")
+            InlineKeyboardButton(text="Принять задачу", callback_data=f"accept_{task_id[0]}")
         )
     markup.add(
         InlineKeyboardButton(text="Назад", callback_data=f"tasks_{team_id}")

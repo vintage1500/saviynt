@@ -203,8 +203,12 @@ def get_tasks(message: Message):
 @bot.message_handler(func=lambda msg: msg.text == "Добавить задачу в команду")
 def start_add_tasks(message: Message):
     chat_id = message.chat.id
-    bot.send_message(chat_id, "Вы решили создать задачу! Как кратко ее назовем?")
-    bot.register_next_step_handler(message, get_task_name)
+    team_id = manager.user.get_user_team_id(chat_id)
+    if team_id is None or team_id[0] == 0:
+        bot.send_message(chat_id, "Вы не состоите в команде. Действие невозможно", reply_markup=add_task_team(chat_id))
+    else:
+        bot.send_message(chat_id, "Вы решили создать задачу! Как кратко ее назовем?")
+        bot.register_next_step_handler(message, get_task_name)
 
 
 def get_task_name(message: Message):

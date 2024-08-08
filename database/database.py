@@ -323,11 +323,9 @@ class TaskManager(DataBase):
 
     def update_user_accept(self, chat_id, task_id):
         sql = """
-            SET session_replication_role = 'replica';
             UPDATE tasks 
             SET chat_id = %s 
             WHERE task_id = %s;
-            SET session_replication_role = 'origin';
         """
         self.manager(sql, chat_id, task_id, commit=True)
 
